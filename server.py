@@ -1,24 +1,12 @@
-import json
 from flask import Flask, render_template, request, redirect, flash, url_for
-
-
-def loadClubs():
-    with open('clubs.json') as c:
-        list_of_clubs = json.load(c)['clubs']
-        return list_of_clubs
-
-
-def loadCompetitions():
-    with open('competitions.json') as comps:
-        list_of_competitions = json.load(comps)['competitions']
-        return list_of_competitions
+from .db import (competitions,
+                 clubs,
+                 update_club_points,
+                 update_competition_places)
 
 
 app = Flask(__name__)
 app.secret_key = 'something_special'
-
-competitions = loadCompetitions()
-clubs = loadClubs()
 
 
 @app.route('/')
@@ -40,7 +28,9 @@ def book(competition, club):
     found_club = [c for c in clubs if c['name'] == club][0]
     found_competition = [c for c in competitions if c['name'] == competition][0]
     if found_club and found_competition:
-        return render_template('booking.html', club=found_club, competition=found_competition)
+        return render_template('booking.html',
+                               club=found_club,
+                               competition=found_competition)
     else:
         flash("Something went wrong-please try again")
         return render_template('welcome.html', club=club, competitions=competitions)
@@ -48,12 +38,18 @@ def book(competition, club):
 
 @app.route('/purchasePlaces', methods=['POST'])
 def purchasePlaces():
-    competition = [c for c in competitions if c['name'] == request.form['competition']][0]
-    club = [c for c in clubs if c['name'] == request.form['club']][0]
+    competition = [(index, c) for index, c in enumerate(competitions) if c['name'] == request.form['competition']][0]
+    club = [(index, c) for index, c in enumerate(clubs) if c['name'] == request.form['club']][0]
     places_required = int(request.form['places'])
-    competition['numberOfPlaces'] = int(competition['numberOfPlaces'])-places_required
+
+    # Update places left in competition and points left of the club
+    competition[1]['numberOfPlaces'] = int(competition[1]['numberOfPlaces']) - places_required
+    club[1]['points'] = int(club[1]['points']) - places_required
+    update_club_points(club[0], club[1]['points'])
+    update_competition_places(competition[0], competition[1]['numberOfPlaces'])
+    print(competitions[1])
     flash('Great-booking complete!')
-    return render_template('welcome.html', club=club, cogmpetitions=competitions)
+    return render_template('welcome.html', club=club[1], competitions=competitions)
 
 
 # TODO: Add route for points display
