@@ -53,12 +53,16 @@ def purchasePlaces():
         flash('Not enough places available... Try again with less.')
         return render_template('welcome.html', club=club[1], competitions=competitions)
 
+    elif places_required > 12:
+        flash('You are not allowed to book more than 12 places.')
+        return render_template('welcome.html', club=club[1], competitions=competitions)
+
     else:
-        update_club_points(club[0], club[1]['points'])
-        update_competition_places(competition[0], competition[1]['numberOfPlaces'])
+        update_club_points(club[0], club_points_left)
+        update_competition_places(competition[0], competition_places_left)
 
     flash('Great-booking complete!')
-    return render_template('welcome.html', club=clubs[club[1]], competitions=competitions)
+    return render_template('welcome.html', club=clubs[club[0]], competitions=competitions)
 
 
 # TODO: Add route for points display
