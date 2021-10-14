@@ -31,6 +31,18 @@
         {% endfor %}
     </ul>
     {%endwith%}
-
+<hr>
+<div style="background-color:rgba(128, 128, 128, 0.5); padding: 22px;">
+    <h2>Points display board</h2>
+    <table>
+        {% for c in clubs%}
+            <tr>
+                <td>{{c['name']}}</td>
+                <td>{{c['points']}} pts</td>
+            </tr>
+        {% endfor %}
+    </table>
+    
+</div>
 </body>
 </html>

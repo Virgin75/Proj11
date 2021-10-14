@@ -25,8 +25,7 @@ def show_summary():
             is_past_event = datetime.strptime(comp['date'], "%Y-%m-%d %H:%M:%S") < datetime.now()
             comp['is_past'] = is_past_event
 
-        print(competitions)
-        return render_template('welcome.html', club=club, competitions=competitions)
+        return render_template('welcome.html', club=club, competitions=competitions, clubs=clubs)
     except IndexError:
         return "Sorry but this email does not exist :("
 
