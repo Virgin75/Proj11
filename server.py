@@ -4,6 +4,8 @@ from .db import (competitions,
                  update_club_points,
                  update_competition_places)
 
+from datetime import datetime
+
 
 app = Flask(__name__)
 app.secret_key = 'something_special'
@@ -18,6 +20,12 @@ def index():
 def show_summary():
     try:
         club = [club for club in clubs if club['email'] == request.form['email']][0]
+
+        for comp in competitions:
+            is_past_event = datetime.strptime(comp['date'], "%Y-%m-%d %H:%M:%S") < datetime.now()
+            comp['is_past'] = is_past_event
+
+        print(competitions)
         return render_template('welcome.html', club=club, competitions=competitions)
     except IndexError:
         return "Sorry but this email does not exist :("
@@ -42,7 +50,6 @@ def purchasePlaces():
     competition = [(index, c) for index, c in enumerate(competitions) if c['name'] == request.form['competition']][0]
     club = [(index, c) for index, c in enumerate(clubs) if c['name'] == request.form['club']][0]
     print(club)
-    print(competition)
     places_required = int(request.form['places'])
 
     # Update places left in competition and points left of the club
@@ -55,6 +62,10 @@ def purchasePlaces():
 
     elif places_required > 12:
         flash('You are not allowed to book more than 12 places.')
+        return render_template('welcome.html', club=club[1], competitions=competitions)
+
+    elif datetime.strptime(competition[1]['date'], "%Y-%m-%d %H:%M:%S") < datetime.now():
+        flash('This event is over. You cannot book a place anymore.')
         return render_template('welcome.html', club=club[1], competitions=competitions)
 
     else:
