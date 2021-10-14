@@ -38,31 +38,18 @@ def book(competition, club):
 
 @app.route('/purchasePlaces', methods=['POST'])
 def purchasePlaces():
-    # 2 var below return a tuple with index in json file & content
     competition = [(index, c) for index, c in enumerate(competitions) if c['name'] == request.form['competition']][0]
     club = [(index, c) for index, c in enumerate(clubs) if c['name'] == request.form['club']][0]
-    print(club)
-    print(competition)
     places_required = int(request.form['places'])
 
     # Update places left in competition and points left of the club
-    competition_places_left = int(competition[1]['numberOfPlaces']) - places_required
-    club_points_left = int(club[1]['points']) - places_required
-
-    if competition_places_left < 0:
-        flash('Not enough places available... Try again with less.')
-        return render_template('welcome.html', club=club[1], competitions=competitions)
-
-    elif places_required > 12:
-        flash('You are not allowed to book more than 12 places.')
-        return render_template('welcome.html', club=club[1], competitions=competitions)
-
-    else:
-        update_club_points(club[0], club_points_left)
-        update_competition_places(competition[0], competition_places_left)
-
+    competition[1]['numberOfPlaces'] = int(competition[1]['numberOfPlaces']) - places_required
+    club[1]['points'] = int(club[1]['points']) - places_required
+    update_club_points(club[0], club[1]['points'])
+    update_competition_places(competition[0], competition[1]['numberOfPlaces'])
+    print(competitions[1])
     flash('Great-booking complete!')
-    return render_template('welcome.html', club=clubs[club[0]], competitions=competitions)
+    return render_template('welcome.html', club=club[1], competitions=competitions)
 
 
 # TODO: Add route for points display
