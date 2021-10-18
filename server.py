@@ -48,15 +48,18 @@ def purchasePlaces():
     # 2 var below return a tuple with index in json file & content
     competition = [(index, c) for index, c in enumerate(competitions) if c['name'] == request.form['competition']][0]
     club = [(index, c) for index, c in enumerate(clubs) if c['name'] == request.form['club']][0]
-    print(club)
     places_required = int(request.form['places'])
 
     # Update places left in competition and points left of the club
     competition_places_left = int(competition[1]['numberOfPlaces']) - places_required
     club_points_left = int(club[1]['points']) - places_required
 
-    if competition_places_left < 0:
-        flash('Not enough places available... Try again with less.')
+    if competition_places_left <= 0:
+        flash('Not enough places left in the competition...')
+        return render_template('welcome.html', club=club[1], competitions=competitions)
+
+    if club_points_left <= 0:
+        flash('Not enough points available in the club to book that many places...')
         return render_template('welcome.html', club=club[1], competitions=competitions)
 
     elif places_required > 12:
