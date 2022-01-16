@@ -45,17 +45,14 @@ def book(competition, club):
 
 @app.route('/purchasePlaces', methods=['POST'])
 def purchasePlaces():
-    # 2 var below return a tuple with index in json file & content
+    # 2 var below return a tuple with: index in json file & content
     competition = [(index, c) for index, c in enumerate(competitions) if c['name'] == request.form['competition']][0]
     club = [(index, c) for index, c in enumerate(clubs) if c['name'] == request.form['club']][0]
     places_required = int(request.form['places'])
 
-    # Update places left in competition and points left of the club
+    # Count places left in competition and points left of the club
     competition_places_left = int(competition[1]['numberOfPlaces']) - places_required
-    club_points_left = int(club[1]['points']) - places_required
-
-    # testing
-    print(places_required)
+    club_points_left = int(club[1]['points']) - (3*places_required)
 
     if competition_places_left <= 0:
         flash('Not enough places left in the competition...')
