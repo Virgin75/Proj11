@@ -2,6 +2,9 @@ from locust import HttpUser, task
 
 
 class QuickstartUser(HttpUser):
+    @task
+    def go_to_home_page(self):
+        self.client.get("/")
 
     @task
     def go_to_a_booking_page(self):
