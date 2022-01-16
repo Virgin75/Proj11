@@ -13,7 +13,7 @@ app.secret_key = 'something_special'
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', clubs=clubs)
 
 
 @app.route('/show-summary', methods=['POST'])
@@ -40,7 +40,7 @@ def book(competition, club):
                                competition=found_competition)
     else:
         flash("Something went wrong-please try again")
-        return render_template('welcome.html', club=club, competitions=competitions)
+        return render_template('welcome.html', club=club, competitions=competitions, clubs=clubs)
 
 
 @app.route('/purchasePlaces', methods=['POST'])
@@ -78,7 +78,7 @@ def purchasePlaces():
         update_competition_places(competition[0], competition_places_left)
 
     flash('Great-booking complete!')
-    return render_template('welcome.html', club=clubs[club[0]], competitions=competitions)
+    return render_template('welcome.html', club=clubs[club[0]], competitions=competitions, clubs=clubs)
 
 
 # TODO: Add route for points display
