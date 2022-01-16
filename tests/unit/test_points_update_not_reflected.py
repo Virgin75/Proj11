@@ -31,4 +31,4 @@ def test_points_update_not_reflected():
     current_club_points = next(club for club in clubs if club['name'] == CLUB_TO_TEST)['points']
 
     assert response.status_code == 200
-    assert club_points_before_request - PLACES_TO_BUY == current_club_points
+    assert club_points_before_request - (3*PLACES_TO_BUY) == current_club_points

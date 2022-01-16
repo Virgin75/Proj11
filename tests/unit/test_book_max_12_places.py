@@ -25,4 +25,6 @@ def test_book_max_12_places():
         ))
 
     assert response.status_code == 200
+    print(clubs)
+    print(response.data)
     assert b"You are not allowed to book more than 12 places" in response.data
